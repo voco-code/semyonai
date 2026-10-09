@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>Семён AI</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Семён AI">
+<meta name="theme-color" content="#000000">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="https://i.ibb.co/bjffzTRt/icon-glass-1024.png">
+<link rel="icon" type="image/png" href="https://i.ibb.co/bjffzTRt/icon-glass-1024.png">
+<link rel="manifest" id="mf">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#000;color:#fff;font-family:-apple-system,system-ui,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#app{position:fixed;inset:0;height:100dvh;display:flex;flex-direction:column}
+header{padding:calc(env(safe-area-inset-top,0px) + 8px) 10px 4px}
+.burger{width:44px;height:44px;border:0;background:none;position:relative;cursor:pointer}
+.burger i{position:absolute;left:10px;top:13px;width:24px;height:3px;background:#fff;border-radius:2px;box-shadow:0 8px 0 #fff,0 16px 0 #fff}
+.main{flex:1;position:relative;min-height:0}
+#chat{position:absolute;inset:0;overflow-y:auto;padding:8px 14px;display:flex;flex-direction:column;gap:14px;-webkit-overflow-scrolling:touch}
+.u,.a{white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word;line-height:1.45;font-size:16px}
+.u{align-self:flex-end;max-width:85%;background:#262626;padding:10px 14px;border-radius:18px 18px 4px 18px}
+.a{align-self:flex-start;max-width:94%}
+pre{background:#161616;padding:10px;border-radius:10px;overflow-x:auto;white-space:pre;margin:8px 0;font-size:13px}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#1d1d1d;border-radius:5px;padding:1px 4px}
+pre code{background:none;padding:0}
+.ld{align-self:flex-start;font-size:30px;transition:opacity .6s}
+.ld span{display:inline-block;animation:sp 2s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#hello{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:20px;pointer-events:none;font-size:30px;font-weight:800;overflow-wrap:anywhere}
+#hello span{background:linear-gradient(90deg,#f33,#fa0,#ee0,#3d3,#0cf,#66f,#f3f,#f33);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:rb 4s linear infinite}
+@keyframes rb{to{background-position:300% 0}}
+.bar{display:flex;gap:10px;padding:8px 12px calc(env(safe-area-inset-bottom,0px) + 12px)}
+.bar input{flex:1;min-width:0;height:48px;border:0;border-radius:24px;background:#ff2d2d;color:#000;padding:0 18px;font-size:16px;outline:0;text-overflow:ellipsis;white-space:nowrap}
+.bar input::placeholder{color:#000;opacity:1}
+.pl{width:48px;height:48px;flex:none;border-radius:50%;border:0;background:#ff2d2d;position:relative;cursor:pointer}
+.pl::before,.pl::after{content:"";position:absolute;left:50%;top:50%;background:#000;border-radius:2px;transform:translate(-50%,-50%)}
+.pl::before{width:22px;height:3px}
+.pl::after{width:3px;height:22px}
+#pv{display:none;padding:6px 14px 0}
+.pvb{position:relative;width:76px;height:76px}
+.pvb img{width:100%;height:100%;object-fit:cover;border-radius:14px;display:block}
+.pvb button{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:50%;border:0;background:#ff2d2d;color:#000;font:700 16px/1 sans-serif;cursor:pointer;padding:0}
+.u img{display:block;width:150px;height:150px;object-fit:cover;border-radius:14px}
+.u img:not(:last-child){margin-bottom:8px}
+.send{width:48px;height:48px;flex:none;border-radius:50%;border:0;background:#ff2d2d;position:relative;cursor:pointer}
+.send::before{content:"";position:absolute;left:50%;top:13px;width:3px;height:21px;margin-left:-1.5px;background:#000;border-radius:2px}
+.send::after{content:"";position:absolute;left:50%;top:15px;width:12px;height:12px;margin-left:-6px;border-left:3px solid #000;border-top:3px solid #000;transform:rotate(45deg)}
+#menu{position:fixed;inset:0;background:#000;z-index:10;display:flex;flex-direction:column;transform:translateX(-100%);visibility:hidden;transition:transform .25s,visibility .25s}
+#menu.on{transform:none;visibility:visible}
+.top{display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px}
+.x{width:44px;height:44px;border-radius:50%;background:#ff2d2d;color:#000;border:0;font:700 22px/1 sans-serif;cursor:pointer}
+.nc{display:flex;align-items:center;gap:10px;background:none;border:0;color:#fff;font-size:17px;font-weight:600;padding:8px 4px;cursor:pointer}
+.pad{width:18px;height:22px;border:2px solid #fff;border-radius:3px;position:relative;background:repeating-linear-gradient(#000 0 4px,#fff 4px 5px);background-size:100% 100%;background-position:0 5px;background-repeat:no-repeat}
+.pad::before{content:"";position:absolute;left:2px;right:2px;top:-5px;height:5px;border-left:2px solid #fff;border-right:2px solid #fff}
+.list{flex:1;overflow-y:auto;padding:6px 14px}
+.it{padding:13px 14px;border-radius:12px;background:#151515;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.it.cur{outline:1px solid #ff2d2d}
+.bot{padding:12px 14px calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;justify-content:center}
+#reg{background:#1e6bff;color:#fff;border:0;border-radius:14px;padding:15px 28px;font-size:17px;font-weight:700;cursor:pointer}
+#nick{display:none;align-items:center;gap:10px;font-size:18px;font-weight:600;overflow-wrap:anywhere}
+#nick b{width:36px;height:36px;border-radius:50%;background:#1e6bff;display:grid;place-items:center;flex:none}
+#md,#ed{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:20;display:none;place-items:center}
+.box{position:relative;width:min(88vw,340px);background:#1c1c1c;border-radius:20px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.box h3{margin:6px 34px 0;text-align:center;font-size:18px;color:#fff}
+.box input{width:100%;height:46px;border-radius:12px;border:1px solid #444;background:#000;color:#fff;font-size:16px;text-align:center;outline:0}
+.cl{position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:50%;border:0;background:#333;color:#fff;font:400 20px/1 sans-serif;cursor:pointer}
+.go{width:100%;height:46px;border:0;border-radius:12px;background:#ff9500;color:#000;font-size:17px;font-weight:700;cursor:pointer}
+.go:disabled{opacity:.6}
+.eb{display:block;margin-top:10px;background:#262626;color:#ff9a9a;border:1px solid #444;border-radius:10px;padding:8px 12px;font-size:14px;cursor:pointer}
+#et{white-space:pre-wrap;overflow-wrap:anywhere;max-height:45vh;overflow:auto;width:100%;margin:0;color:#ff9a9a;user-select:text;-webkit-user-select:text}
+.er{min-height:18px;margin:0;font-size:13px;color:#ff6b6b;text-align:center;overflow-wrap:anywhere}
+.sw{background:none;border:0;color:#8ab4ff;font-size:14px;cursor:pointer}
+.lo{background:none;border:1px solid #444;border-radius:10px;color:#aaa;font-size:14px;padding:6px 10px;cursor:pointer}
+#off{position:fixed;inset:0;z-index:30;background:#000;display:none;align-items:center;justify-content:center;padding:20px}
+#off.on{display:flex}
+.oc{text-align:center;display:flex;flex-direction:column;align-items:center}
+.oc svg{width:min(62vw,260px);height:auto}
+.oc h2{margin:18px 0 6px;font-size:24px;font-weight:700;color:#fff}
+.oc p{margin:0 0 22px;color:#aaa;font-size:16px}
+#rt{background:#ff2d2d;color:#000;border:0;border-radius:24px;padding:13px 38px;font-size:17px;font-weight:700;cursor:pointer}
+#rt:disabled{opacity:.6}
+@keyframes wb{0%,100%{opacity:.25}50%{opacity:1}}
+.wa1{animation:wb 1.8s infinite}.wa2{animation:wb 1.8s .3s infinite}.wa3{animation:wb 1.8s .6s infinite}
+</style>
+</head>
+<body>
+<div id="app">
+  <header><button class="burger" id="bg" aria-label="Меню"><i></i></button></header>
+  <div class="main">
+    <div id="chat"></div>
+    <div id="hello"><span id="hs"></span></div>
+  </div>
+  <div id="pv"><div class="pvb"><img id="pi" alt=""><button id="px" aria-label="Убрать фото">×</button></div></div>
+  <div class="bar">
+    <button class="pl" id="pl" aria-label="Добавить фото"></button>
+    <input id="in" placeholder="Спросите Семёна" autocomplete="off" enterkeyhint="send">
+    <button class="send" id="sd" aria-label="Отправить"></button>
+  </div>
+</div>
+
+<input type="file" id="fi" accept="image/*" hidden>
+
+<div id="menu">
+  <div class="top">
+    <button class="nc" id="nc"><span class="pad"></span>Новый чат</button>
+    <button class="x" id="mx">Х</button>
+  </div>
+  <div class="list" id="list"></div>
+  <div class="bot">
+    <button id="reg">Создать аккаунт</button>
+    <div id="nick"><b id="av"></b><span id="nm"></span><button class="lo" id="lo">Выйти</button></div>
+  </div>
+</div>
+
+<div id="md">
+  <div class="box">
+    <button class="cl" id="mc" aria-label="Закрыть">×</button>
+    <h3 id="mt">Создайте аккаунт</h3>
+    <input id="em" type="text" placeholder="Ник S Account" autocomplete="username" autocapitalize="off" spellcheck="false">
+    <input id="pw" type="password" placeholder="Пароль (мин. 6 символов)" autocomplete="current-password">
+    <p class="er" id="er"></p>
+    <button class="go" id="go">Регистрация</button>
+    <button class="sw" id="sw">Уже есть аккаунт? Войти</button>
+  </div>
+</div>
+
+<div id="off">
+  <div class="oc">
+    <svg viewBox="0 0 260 330" role="img" aria-label="Нет соединения">
+      <g fill="none" stroke="#777" stroke-width="5" stroke-linecap="round">
+        <path class="wa1" d="M94.6 34.6 A50 50 0 0 1 165.4 34.6"/>
+        <path class="wa2" d="M106 46 A34 34 0 0 1 154 46"/>
+        <path class="wa3" d="M117.3 57.3 A18 18 0 0 1 142.7 57.3"/>
+      </g>
+      <circle cx="130" cy="74" r="4" fill="#777"/>
+      <line x1="90" y1="20" x2="170" y2="90" stroke="#000" stroke-width="12" stroke-linecap="round"/>
+      <line x1="90" y1="20" x2="170" y2="90" stroke="#ff2d2d" stroke-width="5" stroke-linecap="round"/>
+      <rect x="46" y="192" width="14" height="32" rx="5" fill="#ff2d2d"/>
+      <rect x="200" y="192" width="14" height="32" rx="5" fill="#ff2d2d"/>
+      <rect x="60" y="155" width="140" height="100" rx="26" fill="#1f1f1f" stroke="#ff2d2d" stroke-width="3"/>
+      <path d="M68 162 C68 105 192 105 192 162 Z" fill="#ff2d2d"/>
+      <ellipse cx="202" cy="166" rx="34" ry="7" fill="#c41e1e"/>
+      <circle cx="130" cy="118" r="5" fill="#c41e1e"/>
+      <g stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none">
+        <line x1="91" y1="195" x2="109" y2="213"/><line x1="109" y1="195" x2="91" y2="213"/>
+        <line x1="151" y1="195" x2="169" y2="213"/><line x1="169" y1="195" x2="151" y2="213"/>
+        <path d="M108 237 Q130 224 152 237"/>
+      </g>
+      <rect x="90" y="260" width="80" height="22" rx="8" fill="#1f1f1f" stroke="#333"/>
+      <path d="M130 282 C130 312 102 306 88 312" fill="none" stroke="#ff2d2d" stroke-width="3" stroke-linecap="round"/>
+      <rect x="58" y="306" width="30" height="14" rx="3" fill="#888"/>
+      <line x1="52" y1="310" x2="58" y2="310" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+      <line x1="52" y1="316" x2="58" y2="316" stroke="#888" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <h2>Нет соединения</h2>
+    <p>Семён ждёт сеть. Проверь интернет</p>
+    <button id="rt">Повторить</button>
+  </div>
+</div>
+
+<div id="ed">
+  <div class="box">
+    <button class="cl" id="ec" aria-label="Закрыть">×</button>
+    <h3>Код ошибки Gemini API</h3>
+    <pre id="et"></pre>
+    <button class="go" id="ecp">Копировать</button>
+  </div>
+</div>
+
+<script type="module">
+try{
+  try{if(localStorage.sai_chats&&!localStorage.sai_backup)localStorage.sai_backup=localStorage.sai_chats}catch(e){}
+  const {initializeApp}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+  const {getDatabase,ref,set,get,onValue}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js');
+  const {getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+  // S Account: общий проект Semyon Studio
+  const app=initializeApp({
+    apiKey:"AIzaSyAtV5VSvVf_SH7ouqRwbCbw39BN7fLVS80",
+    authDomain:"saccount-c1e12.firebaseapp.com",
+    databaseURL:"https://saccount-c1e12-default-rtdb.firebaseio.com",
+    projectId:"saccount-c1e12",
+    storageBucket:"saccount-c1e12.firebasestorage.app",
+    messagingSenderId:"1040807950487",
+    appId:"1:1040807950487:web:9227092861f004454011d2"
+  });
+  const db=getDatabase(app),au=getAuth(app);
+  const P=n=>ref(db,'ai/users/'+n);
+  const mail=e=>(e.includes('@')?e.split('@')[0]:e).trim().toLowerCase()+'@semyonmail.com';
+  const linked=u=>get(ref(db,'users/'+u.uid+'/connect/semyon')).then(s=>s.val()===true);
+  window.FB={
+    save:(n,d)=>set(P(n),d),
+    load:n=>get(P(n)).then(s=>s.val()),
+    listen:(n,f)=>onValue(P(n),s=>f(s.val()),()=>{}),
+    signUp:()=>Promise.reject({code:'sa/signup'}),
+    signIn:async(e,p)=>{
+      const c=await signInWithEmailAndPassword(au,mail(e),p);
+      if(!(await linked(c.user))){await signOut(au);throw {code:'sa/not-connected'}}
+      return c;
+    },
+    signOut:()=>signOut(au),
+    onUser:f=>onAuthStateChanged(au,async u=>{
+      if(!u)return f(null);
+      try{if(await linked(u))f(u);else{await signOut(au);f(null)}}catch(e){/* нет связи: ничего не меняем */}
+    })
+  };
+}catch(e){console.warn('Firebase off',e)}
+window.dispatchEvent(new Event('fb'));
+</script>
+
+<script>
+const $=s=>document.querySelector(s);
+const ICON='https://i.ibb.co/bjffzTRt/icon-glass-1024.png';
+// Ключ разделён на 3 части, склеивается браузером в момент запроса
+const k1='AQ.Ab8RN6LGJNLOy72C',k2='TIkT-kF_Eu1Hwq1Q_e',k3='XQpIkUQ0OA1vKmNg';
+// Прокси в США (см. api/gemini.js). Вставь сюда адрес, например 'https://твой-проект.vercel.app/api/gemini'
+// Пока пусто — запросы идут напрямую в Google (с твоего реального IP).
+const PROXY='';
+const GEMINI_URL=m=>PROXY?PROXY+'?model='+m:'https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent';
+// При прокси ключ хранится на сервере (переменная GEMINI_KEY) и из страницы не отправляется
+const HDR=PROXY?{'Content-Type':'application/json'}:{'Content-Type':'application/json','X-goog-api-key':k1+k2+k3};
+// Если модель перегружена (503), закончилась квота (429) или недоступна — автоматически берётся следующая
+const MODELS=['gemini-flash-latest','gemini-flash-lite-latest','gemini-2.5-flash','gemini-2.5-flash-lite','gemini-2.0-flash'];
+const bad={};
+const SYS='Ты Семён AI — помогаешь с кодом, делами, лайфхаками, учёбой и всем остальным. Внимательно читай вопрос пользователя и отвечай именно на него, по делу, на языке пользователя. Помни контекст переписки.';
+
+let chats={},cur=null,uid=localStorage.sai_uid||'',nick=uid?(localStorage.sai_nick||''):'',busy=false,tm;
+try{chats=JSON.parse(localStorage.sai_chats||'{}')}catch(e){}
+const chat=$('#chat');
+
+/* PWA manifest */
+$('#mf').href=URL.createObjectURL(new Blob([JSON.stringify({name:'Семён AI',short_name:'Семён AI',start_url:'.',display:'standalone',background_color:'#000000',theme_color:'#000000',icons:[{src:ICON,sizes:'192x192 512x512 1024x1024',type:'image/png',purpose:'any'}]})],{type:'application/manifest+json'}));
+
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function md(s){
+  s=esc(s);
+  s=s.replace(/```\w*\n?([\s\S]*?)```/g,(m,c)=>'<pre><code>'+c+'</code></pre>');
+  return s.replace(/`([^`\n]+)`/g,'<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
+}
+const scroll=()=>{chat.scrollTop=chat.scrollHeight};
+
+/* ---------- облако ---------- */
+const fkey=()=>uid;
+function save(){
+  const data=JSON.stringify(chats);
+  try{localStorage.sai_chats=data}catch(e){}
+  if(uid&&window.FB)FB.save(fkey(),{data,t:Date.now()}).catch(()=>{});
+}
+async function sync(){
+  if(!uid||!window.FB)return;
+  try{
+    const v=await FB.load(fkey());
+    if(v&&v.data){
+      const r=JSON.parse(v.data);
+      for(const id in r){if(!chats[id]||(r[id].t||0)>(chats[id].t||0))chats[id]=r[id]}
+      localStorage.sai_chats=JSON.stringify(chats);
+      renderList();
+      if(cur&&chats[cur]&&!busy)openChat(cur);
+    }
+    save();
+  }catch(e){}
+}
+let lu='';
+function listen(){
+  if(!uid||!window.FB||lu===uid)return;
+  const me=lu=uid;
+  FB.listen(uid,v=>{
+    if(lu!==me||!v||!v.data||busy)return;
+    try{
+      const r=JSON.parse(v.data);let ch=false;
+      for(const id in r){if(!chats[id]||(r[id].t||0)>(chats[id].t||0)){chats[id]=r[id];ch=true}}
+      if(!ch)return;
+      localStorage.sai_chats=JSON.stringify(chats);renderList();
+      if(cur&&chats[cur])openChat(cur);
+    }catch(e){}
+  });
+}
+function setUser(u){
+  uid=u.uid;nick=u.displayName||(u.email||'').split('@')[0];
+  localStorage.sai_uid=uid;localStorage.sai_nick=nick;
+  try{const b=JSON.parse(localStorage.sai_backup||'null');if(b){for(const id in b)if(!chats[id])chats[id]=b[id];localStorage.removeItem('sai_backup')}}catch(e){}
+  showNick();showHello();sync();listen();
+}
+function clearUser(){
+  lu='';uid='';nick='';chats={};cur=null;
+  ['sai_uid','sai_nick','sai_chats'].forEach(k=>localStorage.removeItem(k));
+  chat.innerHTML='';showNick();renderList();showHello();menu(false);
+}
+let authOn=false;
+function initAuth(){
+  if(authOn||!window.FB)return;authOn=true;
+  FB.onUser(u=>{if(u)setUser(u);else if(uid)clearUser()});
+}
+window.addEventListener('fb',initAuth);
+
+/* ---------- интерфейс ---------- */
+function showHello(){
+  const empty=!cur||!chats[cur]||!chats[cur].m.length;
+  $('#hello').style.display=(empty&&nick)?'grid':'none';
+  $('#hs').textContent='Здравствуйте, '+nick+'!';
+}
+function addErr(d,e){
+  if(!e)return;
+  const b=document.createElement('button');b.className='eb';b.textContent='Просмотреть код ошибки';
+  b.onclick=()=>{$('#et').textContent=e;$('#ed').style.display='grid'};
+  d.appendChild(b);
+}
+function bubble(role,text,type,err,img){
+  const d=document.createElement('div');
+  d.className=role==='user'?'u':'a';
+  chat.appendChild(d);
+  if(role==='user'){
+    if(img){const im=document.createElement('img');im.src=img;im.onload=scroll;d.appendChild(im)}
+    if(text)d.appendChild(document.createTextNode(text));
+    scroll();return Promise.resolve()
+  }
+  if(!type){d.innerHTML=md(text);addErr(d,err);scroll();return Promise.resolve()}
+  return new Promise(res=>{
+    let i=0;const st=Math.max(1,Math.ceil(text.length/350));
+    clearInterval(tm);
+    tm=setInterval(()=>{
+      i+=st;d.textContent=text.slice(0,i);scroll();
+      if(i>=text.length){clearInterval(tm);d.innerHTML=md(text);addErr(d,err);scroll();res()}
+    },18);
+  });
+}
+function loader(){
+  const d=document.createElement('div');d.className='ld';d.innerHTML='<span>⚡️</span>';
+  chat.appendChild(d);
+  const E=['⚡️','🧢','🎮'];let n=0;
+  d.t=setInterval(()=>{
+    d.style.opacity=0;
+    setTimeout(()=>{n=(n+1)%3;d.firstChild.textContent=E[n];d.style.opacity=1},600);
+  },6000);
+  scroll();return d;
+}
+function openChat(id){
+  clearInterval(tm);cur=id;chat.innerHTML='';
+  chats[id].m.forEach(m=>bubble(m.r==='user'?'user':'bot',m.t,false,m.e,m.i));
+  showHello();renderList();
+}
+function newChat(){clearInterval(tm);cur=null;chat.innerHTML='';showHello();renderList()}
+function renderList(){
+  const l=$('#list');l.innerHTML='';
+  Object.values(chats).sort((a,b)=>(b.t||0)-(a.t||0)).forEach(c=>{
+    const d=document.createElement('div');d.className='it'+(c.id===cur?' cur':'');
+    d.textContent=c.title;
+    d.onclick=()=>{openChat(c.id);menu(false)};
+    l.appendChild(d);
+  });
+}
+const menu=on=>$('#menu').classList.toggle('on',on);
+function showNick(){
+  if(!nick){$('#reg').style.display='';$('#nick').style.display='none';return}
+  $('#reg').style.display='none';$('#nick').style.display='flex';
+  $('#nm').textContent=nick;$('#av').textContent=nick[0].toUpperCase();
+}
+
+/* ---------- отправка ---------- */
+async function send(){
+  const inp=$('#in'),text=inp.value.trim(),img=pimg;
+  if((!text&&!img)||busy)return;
+  if(!navigator.onLine){pend=true;showOff();return}
+  inp.value='';clearImg();busy=true;
+  if(!cur||!chats[cur]){
+    cur='c'+Date.now();
+    chats[cur]={id:cur,title:text.slice(0,40)||'Фото',m:[],t:Date.now()};
+  }
+  const id=cur,c=chats[id];
+  c.m.push(img?{r:'user',t:text,i:img}:{r:'user',t:text});c.t=Date.now();save();renderList();showHello();
+  bubble('user',text,false,null,img);
+  const ld=loader();
+  const ans=await ask(c.m);
+  clearInterval(ld.t);ld.remove();
+  c.m.push(ans.e?{r:'bot',t:ans.t,e:ans.e,x:ans.x}:{r:'bot',t:ans.t});c.t=Date.now();save();
+  if(ans.e&&/сеть\/таймаут/.test(ans.e))checkNet().then(ok=>{if(!ok)showOff()});
+  if(cur===id)await bubble('bot',ans.t,true,ans.e);
+  busy=false;
+}
+
+function toContents(msgs){
+  const h=msgs.filter(m=>!m.x),keep=new Set();let left=3;
+  for(let i=h.length-1;i>=0&&left>0;i--)if(h[i].i){keep.add(i);left--}
+  return h.map((m,i)=>{
+    const parts=[];
+    if(keep.has(i))parts.push({inlineData:{mimeType:'image/jpeg',data:m.i.split(',')[1]}});
+    if(m.t)parts.push({text:m.t});
+    if(!parts.length)parts.push({text:'(фото)'});
+    return {role:m.r==='user'?'user':'model',parts};
+  });
+}
+async function ask(msgs){
+  const contents=toContents(msgs);
+  // Основной ответ — Gemini. Модель не ответила → пробуем следующую. Словарь — только когда не ответила ни одна.
+  const log=[];
+  for(let pass=0;pass<2;pass++){
+    const now=Date.now();
+    let list=MODELS.filter(x=>!(bad[x]&&now-bad[x]<60000));
+    if(!list.length)list=MODELS;
+    let stop=false;
+    for(const model of list){
+      try{
+        const ac=new AbortController(),to=setTimeout(()=>ac.abort(),30000);
+        const r=await fetch(GEMINI_URL(model),{
+          method:'POST',signal:ac.signal,
+          headers:HDR,
+          body:JSON.stringify({
+            systemInstruction:{parts:[{text:SYS}]},
+            contents
+          })
+        });
+        clearTimeout(to);
+        if(!r.ok){
+          const st=r.status;let msg='',sn='';
+          try{const j=await r.json();msg=j.error.message||'';sn=j.error.status||''}catch(e){}
+          const line=model+' → HTTP '+st+(sn?' ('+sn+')':'')+(msg?': '+msg:'');
+          log.push(line);console.warn('Gemini',line);
+          // ключ неверный или регион закрыт — другие модели не помогут
+          if(st===401||st===403||(st===400&&/location/i.test(msg))){stop=true;break}
+          bad[model]=Date.now();
+          continue;
+        }
+        const j=await r.json();
+        const t=((j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[]).filter(p=>p.text&&!p.thought).map(p=>p.text).join('');
+        if(t){delete bad[model];return {t}}
+        log.push(model+' → пустой ответ');bad[model]=Date.now();
+      }catch(e){
+        log.push(model+' → сеть/таймаут: '+((e&&e.message)||e));bad[model]=Date.now();
+      }
+    }
+    if(stop)break;
+    await new Promise(r=>setTimeout(r,1500));
+  }
+  const f=msgs[msgs.length-1].i?null:fallback(msgs);
+  return {t:f||'Ответ не получен ⚠️',e:log.slice(-8).join('\n\n')||'Неизвестная ошибка',x:!f};
+}
+
+/* ---------- резервный словарь (если кончилась квота ИИ) ---------- */
+const BUTTERFLY=[
+'<!DOCTYPE html>','<html><head><meta charset="utf-8"><style>',
+'body{margin:0;height:100vh;display:grid;place-items:center;background:#111}',
+'.b{position:relative;width:200px;height:120px;animation:f 3s ease-in-out infinite alternate}',
+'.w{position:absolute;top:0;width:92px;height:110px;background:radial-gradient(circle at 50% 40%,#ff0,#f0a);animation:fl .45s ease-in-out infinite alternate}',
+'.l{left:4px;border-radius:90% 10% 80% 20%;transform-origin:right center}',
+'.r{right:4px;border-radius:10% 90% 20% 80%;transform-origin:left center}',
+'.t{position:absolute;left:96px;top:8px;width:8px;height:104px;background:#fff;border-radius:4px}',
+'@keyframes fl{to{transform:scaleX(.3)}}',
+'@keyframes f{to{transform:translateY(-25px)}}',
+'</style></head><body>',
+'<div class="b"><div class="w l"></div><div class="w r"></div><div class="t"></div></div>',
+'</body></html>'].join('\n');
+const F='```';
+const D=[
+ [/^(привет|приветик|здравствуй|здравствуйте|хай|здорово|салам|ку)(?![а-яё])/,()=>'Привет! 👋 Как у тебя дела?'],
+ [/^(хорошо|отлично|норм|нормально|супер|прекрасно|замечательно|good)(?![а-яё])/,(t,p)=>/как у тебя дела/i.test(p)?'Отлично! Раз у тебя дела хорошо мы можем придумать многое! Чем займёмся?':null],
+ [/^(плохо|так себе|грустно|не очень)/,(t,p)=>/как у тебя дела/i.test(p)?'Эх, держись! 🫂 Расскажи, что случилось, или давай отвлечёмся — могу показать лайфхак или сделать что-нибудь на коде.':null],
+ [/бабочк/,()=>'Вот как делается html бабочка 🦋\nСоздай файл index.html и открой его на компьютере или телефоне с этим кодом ниже:\n'+F+'html\n'+BUTTERFLY+'\n'+F+'\nКрылья машут за счёт анимации scaleX в CSS.'],
+ [/моя семья крутая/,()=>'Конечно же да думаю! 🙂🔥 Наверное у меня целый отряд из роботов!'],
+ [/как (у тебя )?дела|как жизнь|как ты(?![а-яё])/,()=>'У меня всё отлично, я же заряжен на 100%! ⚡️ А у тебя как?'],
+ [/кто ты|как тебя зовут|ты кто/,()=>'Я Семён AI 🧢 Помогаю с кодом, делами, лайфхаками, учёбой и всем остальным.'],
+ [/что (ты )?умеешь|чем (ты )?(можешь )?помочь/,()=>'Я умею: писать и объяснять код 💻, помогать с учёбой 📚, придумывать лайфхаки 💡 и просто болтать 🎮. Спрашивай!'],
+ [/спасибо|благодарю|сенкс/,()=>'Всегда пожалуйста! 😊 Обращайся ещё!'],
+ [/^(пока|до свидания|до встречи|бывай)/,()=>'Пока! 👋 Возвращайся, Семён всегда на связи ⚡️'],
+ [/лайфхак/,()=>'Лайфхак 💡: если надо что-то запомнить к утру — повтори это перед сном, а утром вспомни сразу после пробуждения. Мозг закрепляет информацию во сне!'],
+ [/(анекдот|шутк)/,()=>'Программист ложится спать, ставит рядом два стакана: с водой — если захочет пить, и пустой — если не захочет 😄'],
+ [/(как выучить|как учить|как лучше учить)/,()=>'Учиться лучше короткими подходами: 25 минут работы, 5 минут отдыха (метод Помодоро) 🍅 и обязательно пересказывай материал своими словами.'],
+ [/(что такое )?html\b/,()=>'HTML — язык разметки страниц: он задаёт структуру (заголовки, текст, кнопки). Стили добавляет CSS, а логику — JavaScript 🧩'],
+ [/что такое (css|стили)/,()=>'CSS — язык стилей: цвета, размеры, расположение, анимации. С ним сайт из голого текста превращается в красоту 🎨'],
+ [/что такое (js|javascript|джаваскрипт)/,()=>'JavaScript — язык, который оживляет страницы: кнопки, анимации, запросы к серверу. Он работает прямо в браузере ⚡️'],
+ [/(погода|курс доллара|новости)/,()=>'Этого я сейчас не вижу — у меня нет доступа к свежим данным 🛰 Но с кодом, учёбой и идеями помогу!'],
+ [/(\-?\d+(?:[.,]\d+)?)\s*([+\-*\/x×:÷])\s*(\-?\d+(?:[.,]\d+)?)/,(t)=>{
+   const m=t.match(/(\-?\d+(?:[.,]\d+)?)\s*([+\-*\/x×:÷])\s*(\-?\d+(?:[.,]\d+)?)/);
+   const a=parseFloat(m[1].replace(',','.')),b=parseFloat(m[3].replace(',','.')),o=m[2];
+   let r=o==='+'?a+b:o==='-'?a-b:(o==='*'||o==='x'||o==='×')?a*b:b===0?null:a/b;
+   return r===null?'На ноль делить нельзя 🙅':'Получится '+(+r.toFixed(6))+' 🧮';
+ }]
+];
+function fallback(msgs){
+  const last=msgs[msgs.length-1].t;
+  const prev=(msgs[msgs.length-2]||{}).t||'';
+  const n=last.toLowerCase().replace(/[^\p{L}\p{N}\s.,+\-*\/×÷:]/gu,'').trim();
+  for(const [re,fn] of D){
+    if(re.test(n)){const r=fn(n,prev);if(r)return r}
+  }
+  return null;
+}
+
+/* ---------- события ---------- */
+let pimg=null;
+function clearImg(){pimg=null;$('#pv').style.display='none';$('#pi').removeAttribute('src')}
+function readImg(file){
+  return new Promise((res,rej)=>{
+    const u=URL.createObjectURL(file),im=new Image();
+    im.onload=()=>{
+      const M=800,k=Math.min(1,M/Math.max(im.width,im.height));
+      const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+      const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+      URL.revokeObjectURL(u);res(c.toDataURL('image/jpeg',.72));
+    };
+    im.onerror=()=>{URL.revokeObjectURL(u);rej()};
+    im.src=u;
+  });
+}
+$('#pl').onclick=()=>$('#fi').click();
+$('#fi').onchange=async e=>{
+  const f=e.target.files[0];e.target.value='';
+  if(!f)return;
+  try{pimg=await readImg(f);$('#pi').src=pimg;$('#pv').style.display='block'}
+  catch(x){pimg=null;alert('Не удалось открыть это фото')}
+};
+$('#px').onclick=clearImg;
+$('#sd').onclick=send;
+$('#in').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send()}});
+$('#bg').onclick=()=>menu(true);
+$('#mx').onclick=()=>menu(false);
+$('#nc').onclick=()=>{newChat();menu(false)};
+let mode='in';
+function setMode(m){
+  mode=m;$('#er').textContent='';
+  $('#mt').textContent=m==='up'?'Создайте аккаунт':'Войдите в S Account';
+  $('#go').textContent=m==='up'?'Регистрация':'Войти';
+  $('#sw').textContent=m==='up'?'Уже есть аккаунт? Войти':'Нет аккаунта? Регистрация';
+  $('#pw').autocomplete=m==='up'?'new-password':'current-password';
+}
+const ACCOUNT_URL='https://voco-code.github.io/saccount/';
+const ERR={
+  'sa/not-connected':'Сервис не подключён. Откройте S Account и нажмите «Подключить» у Semyon AI',
+  'sa/signup':'Регистрация только в S Account',
+  'auth/email-already-in-use':'Эта почта уже зарегистрирована — нажми «Уже есть аккаунт? Войти»',
+  'auth/invalid-email':'Неправильная почта',
+  'auth/weak-password':'Слишком простой пароль (минимум 6 символов)',
+  'auth/invalid-credential':'Неверный ник или пароль',
+  'auth/wrong-password':'Неверный пароль',
+  'auth/user-not-found':'Такого аккаунта нет — сначала зарегистрируйся',
+  'auth/too-many-requests':'Слишком много попыток, подожди немного',
+  'auth/network-request-failed':'Нет интернета',
+  'auth/operation-not-allowed':'В Firebase не включён вход по почте и паролю (Authentication → Sign-in method → Email/Password)'
+};
+$('#reg').onclick=()=>{setMode('in');$('#md').style.display='grid';setTimeout(()=>$('#em').focus(),50)};
+$('#mc').onclick=()=>{$('#md').style.display='none'};
+$('#ec').onclick=()=>{$('#ed').style.display='none'};
+$('#ecp').onclick=()=>{
+  const t=$('#et').textContent;
+  try{navigator.clipboard.writeText(t).then(()=>{$('#ecp').textContent='Скопировано ✓';setTimeout(()=>$('#ecp').textContent='Копировать',1500)})}catch(e){}
+};
+$('#sw').onclick=()=>{location.href=ACCOUNT_URL};
+$('#go').onclick=async()=>{
+  const e=$('#em').value.trim(),p=$('#pw').value,er=$('#er');
+  if(e.length<3){er.textContent='Введите ник';return}
+  if(p.length<6){er.textContent='Пароль минимум 6 символов';return}
+  if(!window.FB){er.textContent='Нет связи с Firebase. Проверь интернет и обнови страницу';return}
+  $('#go').disabled=true;er.textContent='';
+  try{
+    await (mode==='up'?FB.signUp(e,p):FB.signIn(e,p));
+    $('#md').style.display='none';$('#pw').value='';
+  }catch(x){er.textContent=ERR[x.code]||('Ошибка: '+(x.code||x.message))}
+  $('#go').disabled=false;
+};
+$('#pw').addEventListener('keydown',e=>{if(e.key==='Enter')$('#go').click()});
+$('#em').addEventListener('keydown',e=>{if(e.key==='Enter')$('#pw').focus()});
+$('#lo').onclick=()=>{if(window.FB)FB.signOut().catch(()=>{})};
+
+showNick();renderList();showHello();
+/* ---------- проверка сети ---------- */
+const off=$('#off');let pend=false;
+function showOff(){off.classList.add('on')}
+function ping(u){
+  const ac=new AbortController(),t=setTimeout(()=>ac.abort(),5000);
+  return fetch(u+(u.includes('?')?'&':'?')+'_='+Date.now(),{mode:'no-cors',cache:'no-store',signal:ac.signal}).finally(()=>clearTimeout(t));
+}
+async function checkNet(){
+  if(!navigator.onLine)return false;
+  try{
+    await Promise.any([
+      ping('https://www.gstatic.com/generate_204'),
+      ping('https://www.cloudflare.com/cdn-cgi/trace'),
+      ping('https://www.apple.com/library/test/success.html')
+    ]);
+    return true;
+  }catch(e){return false}
+}
+async function recheck(){
+  const b=$('#rt');b.disabled=true;b.textContent='Проверяю…';
+  const ok=await checkNet();
+  b.disabled=false;b.textContent='Повторить';
+  if(ok){off.classList.remove('on');if(pend){pend=false;send()}}
+}
+$('#rt').onclick=recheck;
+window.addEventListener('offline',showOff);
+window.addEventListener('online',()=>{if(off.classList.contains('on'))recheck()});
+if(!navigator.onLine)showOff();
+
+initAuth();
+</script>
+</body>
+</html>
